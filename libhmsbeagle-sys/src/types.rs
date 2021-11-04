@@ -72,7 +72,7 @@ bitflags! {
         const INVEVEC_TRANSPOSED = 1 << 21;
         const VECTOR_SSE = 1 << 11;
         const VECTOR_AVX = 1 << 24;
-        const VECTOR_NONE = 1 << 12; 
+        const VECTOR_NONE = 1 << 12;
         const THREADING_CPP = 1 << 30;
         const THREADING_OPENMP = 1 << 13;
         const THREADING_NONE = 1 << 14;
