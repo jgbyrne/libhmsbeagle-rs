@@ -42,7 +42,7 @@ pub struct OperationByPartition {
 }
 
 #[derive(Debug)]
-pub enum ReturnCodes {
+pub enum ReturnCode {
     SUCCESS = 0,
     ERROR_GENERAL = -1,
     ERROR_OUT_OF_MEMORY = -2,

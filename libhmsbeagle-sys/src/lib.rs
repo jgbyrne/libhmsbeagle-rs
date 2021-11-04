@@ -7,6 +7,7 @@
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 use std::ffi::CStr;
+use std::mem::transmute;
 
 mod types;
 pub use crate::types::*;
@@ -76,122 +77,122 @@ pub fn create_instance(tipCount: i32, partialsBufferCount: i32,
     }
 }
 
-pub fn finalize() -> i32 {
+pub fn finalize() -> ReturnCode {
     unsafe {
-        beagleFinalize()
+        transmute(beagleFinalize() as i8)
     }
 }
 
-pub fn finalize_instance(instance: i32) -> i32 {
+pub fn finalize_instance(instance: i32) -> ReturnCode {
     unsafe {
-        beagleFinalizeInstance(instance)
+        transmute(beagleFinalizeInstance(instance) as i8)
     }
 }
 
 pub fn get_partials(instance: i32,
                     bufferIndex: i32,
                     scaleIndex: i32,
-                    outPartials: &mut [f64]) -> i32 {
+                    outPartials: &mut [f64]) -> ReturnCode {
     unsafe {
-        beagleGetPartials(instance, bufferIndex, scaleIndex, outPartials.as_mut_ptr())
+        transmute(beagleGetPartials(instance, bufferIndex, scaleIndex, outPartials.as_mut_ptr()) as i8)
     }
 }
 
 pub fn get_scale_factors(instance: i32,
                          srcScalingIndex: i32,
-                         outScaleFactors: &mut [f64]) -> i32 {
+                         outScaleFactors: &mut [f64]) -> ReturnCode {
     unsafe {
-        beagleGetScaleFactors(instance, srcScalingIndex, outScaleFactors.as_mut_ptr())
+        transmute(beagleGetScaleFactors(instance, srcScalingIndex, outScaleFactors.as_mut_ptr()) as i8)
     }
 }
 
 pub fn get_site_derivatives(instance: i32,
                             outFirstDerivatives: &mut [f64],
-                            outSecondDerivatives: &mut [f64]) -> i32 {
+                            outSecondDerivatives: &mut [f64]) -> ReturnCode {
     unsafe {
-        beagleGetSiteDerivatives(instance,
+        transmute(beagleGetSiteDerivatives(instance,
                                  outFirstDerivatives.as_mut_ptr(),
-                                 outSecondDerivatives.as_mut_ptr())
+                                 outSecondDerivatives.as_mut_ptr()) as i8)
     }
 }
 
 pub fn get_site_log_likelihoods(instance: i32,
-                                outLogLikelihoods: &mut [f64]) -> i32 {
+                                outLogLikelihoods: &mut [f64]) -> ReturnCode {
     unsafe {
-        beagleGetSiteLogLikelihoods(instance, outLogLikelihoods.as_mut_ptr())
+        transmute(beagleGetSiteLogLikelihoods(instance, outLogLikelihoods.as_mut_ptr()) as i8)
     }
 }
 
 pub fn get_transition_matrix(instance: i32,
                              matrixIndex: i32,
-                             outMatrix: &mut [f64]) -> i32 {
+                             outMatrix: &mut [f64]) -> ReturnCode {
     unsafe {
-        beagleGetTransitionMatrix(instance, matrixIndex, outMatrix.as_mut_ptr())
+        transmute(beagleGetTransitionMatrix(instance, matrixIndex, outMatrix.as_mut_ptr()) as i8)
     }
 }
 
 pub fn remove_scale_factors(instance: i32,
                             scaleIndices: &[i32],
-                            cumulativeScaleIndex: i32) -> i32 {
+                            cumulativeScaleIndex: i32) -> ReturnCode {
     unsafe {
-        beagleRemoveScaleFactors(instance, scaleIndices.as_ptr(),
-                                 scaleIndices.len() as i32, cumulativeScaleIndex)
+        transmute(beagleRemoveScaleFactors(instance, scaleIndices.as_ptr(),
+                                 scaleIndices.len() as i32, cumulativeScaleIndex) as i8)
     }
 }
 
 pub fn remove_scale_factors_by_partition(instance: i32,
                                          scaleIndices: &[i32],
                                          cumulativeScaleIndex: i32,
-                                         partitionIndex: i32) -> i32 {
+                                         partitionIndex: i32) -> ReturnCode {
     unsafe {
-        beagleRemoveScaleFactorsByPartition(instance,
+        transmute(beagleRemoveScaleFactorsByPartition(instance,
                                  scaleIndices.as_ptr(),
                                  scaleIndices.len() as i32, 
                                  cumulativeScaleIndex,
-                                 partitionIndex)
+                                 partitionIndex) as i8)
     }
 }
 
-pub fn reset_scale_factors(instance: i32, cumulativeScaleIndex: i32) -> i32 {
+pub fn reset_scale_factors(instance: i32, cumulativeScaleIndex: i32) -> ReturnCode {
     unsafe {
-        beagleResetScaleFactors(instance, cumulativeScaleIndex)
+        transmute(beagleResetScaleFactors(instance, cumulativeScaleIndex) as i8)
     }
 }
 
 
 pub fn reset_scale_factors_by_partition(instance: i32,
                                         cumulativeScaleIndex: i32,
-                                        partitionIndex: i32) -> i32 {
+                                        partitionIndex: i32) -> ReturnCode {
     unsafe {
-        beagleResetScaleFactorsByPartition(instance,
+        transmute(beagleResetScaleFactorsByPartition(instance,
                                            cumulativeScaleIndex,
-                                           partitionIndex)
+                                           partitionIndex) as i8)
     }
 }
 
-pub fn set_category_rates(instance: i32, inCategoryRates: &[f64]) -> i32 {
+pub fn set_category_rates(instance: i32, inCategoryRates: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetCategoryRates(instance, inCategoryRates.as_ptr())
+        transmute(beagleSetCategoryRates(instance, inCategoryRates.as_ptr()) as i8)
     }
 }
 
 pub fn set_category_rates_with_index(instance: i32,
                                      categoryRatesIndex: i32,
-                                     inCategoryRates: &[f64]) -> i32 {
+                                     inCategoryRates: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetCategoryRatesWithIndex(instance,
+        transmute(beagleSetCategoryRatesWithIndex(instance,
                                         categoryRatesIndex,
-                                        inCategoryRates.as_ptr())
+                                        inCategoryRates.as_ptr()) as i8)
     }
 }
 
 pub fn set_category_weights(instance: i32,
                             categoryWeightsIndex: i32,
-                            inCategoryWeights: &[f64]) -> i32 {
+                            inCategoryWeights: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetCategoryWeights(instance,
+        transmute(beagleSetCategoryWeights(instance,
                                  categoryWeightsIndex,
-                                 inCategoryWeights.as_ptr())
+                                 inCategoryWeights.as_ptr()) as i8)
     }
 }
 
@@ -199,84 +200,84 @@ pub fn set_eigen_decomposition(instance: i32,
                                eigenIndex: i32,
                                inEigenVectors: &[f64],
                                inInverseEigenVectors: &[f64],
-                               inEigenValues: &[f64]) -> i32 {
+                               inEigenValues: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetEigenDecomposition(instance,
+        transmute(beagleSetEigenDecomposition(instance,
                                     eigenIndex,
                                     inEigenVectors.as_ptr(),
                                     inInverseEigenVectors.as_ptr(),
-                                    inEigenValues.as_ptr())
+                                    inEigenValues.as_ptr()) as i8)
     }
 }
 
 pub fn set_partials(instance: i32,
                     bufferIndex: i32,
-                    inPartials: &[f64]) -> i32 {
+                    inPartials: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetPartials(instance, bufferIndex, inPartials.as_ptr())
+        transmute(beagleSetPartials(instance, bufferIndex, inPartials.as_ptr()) as i8)
     }
 }
 
 pub fn set_pattern_partitions(instance: i32,
                               partitionCount: i32,
-                              inPatternPartitions: &[i32]) -> i32 {
+                              inPatternPartitions: &[i32]) -> ReturnCode {
     unsafe {
-        beagleSetPatternPartitions(instance, partitionCount, inPatternPartitions.as_ptr())
+        transmute(beagleSetPatternPartitions(instance, partitionCount, inPatternPartitions.as_ptr()) as i8)
     }
 }
 
-pub fn set_pattern_weights(instance: i32, inPatternWeights: &[f64]) -> i32 {
+pub fn set_pattern_weights(instance: i32, inPatternWeights: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetPatternWeights(instance, inPatternWeights.as_ptr())    
+        transmute(beagleSetPatternWeights(instance, inPatternWeights.as_ptr()) as i8)
     }
 }
 
-pub fn set_state_frequences(instance: i32, stateFrequenciesIndex: i32, inStateFrequencies: &[f64]) -> i32 {
+pub fn set_state_frequences(instance: i32, stateFrequenciesIndex: i32, inStateFrequencies: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetStateFrequencies(instance, stateFrequenciesIndex, inStateFrequencies.as_ptr())
+        transmute(beagleSetStateFrequencies(instance, stateFrequenciesIndex, inStateFrequencies.as_ptr()) as i8)
     }
 }
 
-pub fn set_tip_partials(instance: i32, tipIndex: i32, inPartials: &[f64]) -> i32 {
+pub fn set_tip_partials(instance: i32, tipIndex: i32, inPartials: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetTipPartials(instance, tipIndex, inPartials.as_ptr())
+        transmute(beagleSetTipPartials(instance, tipIndex, inPartials.as_ptr()) as i8)
     }
 }
 
-pub fn set_tip_states(instance: i32, tipIndex: i32, inStates: &[i32]) -> i32 {
+pub fn set_tip_states(instance: i32, tipIndex: i32, inStates: &[i32]) -> ReturnCode {
     unsafe {
-        beagleSetTipStates(instance, tipIndex, inStates.as_ptr())
+        transmute(beagleSetTipStates(instance, tipIndex, inStates.as_ptr()) as i8)
     }
 }
 
 pub fn set_transition_matrices(instance: i32,
                                matrixIndices: &[i32],
                                inMatrices: &[f64],
-                               paddedValues: &[f64]) -> i32 {
+                               paddedValues: &[f64]) -> ReturnCode {
     unsafe {
-        beagleSetTransitionMatrices(instance,
+        transmute(beagleSetTransitionMatrices(instance,
                                     matrixIndices.as_ptr(),
                                     inMatrices.as_ptr(),
                                     paddedValues.as_ptr(),
-                                    matrixIndices.len() as i32)
+                                    matrixIndices.len() as i32) as i8)
     }
 }
 
 pub fn set_transition_matrix(instance: i32,
                              matrixIndex: i32,
                              inMatrix: &[f64],
-                             paddedValue: f64) -> i32 {
+                             paddedValue: f64) -> ReturnCode {
     unsafe {
-        beagleSetTransitionMatrix(instance,
+        transmute(beagleSetTransitionMatrix(instance,
                                   matrixIndex,
                                   inMatrix.as_ptr(),
-                                  paddedValue)
+                                  paddedValue) as i8)
     }
 }
 
 pub fn update_partials(instance: i32,
                        operations: Vec<Operation>,
-                       cumulativeScaleIndex: i32) -> i32 {
+                       cumulativeScaleIndex: i32) -> ReturnCode {
     unsafe {
         let mut beagle_ops = vec![];
         for op in operations {
@@ -290,16 +291,16 @@ pub fn update_partials(instance: i32,
          	    child2TransitionMatrix: op.child2TransitionMatrix,
             });
         }
-        beagleUpdatePartials(instance,
+        transmute(beagleUpdatePartials(instance,
                              beagle_ops.as_slice().as_ptr(),
                              beagle_ops.len() as i32,
-                             cumulativeScaleIndex)
+                             cumulativeScaleIndex) as i8)
     }
 }
 
 
 pub fn update_partials_by_partition(instance: i32,
-                                    operations: Vec<OperationByPartition>) -> i32 {
+                                    operations: Vec<OperationByPartition>) -> ReturnCode {
     unsafe {
         let mut beagle_ops = vec![];
         for op in operations {
@@ -315,9 +316,9 @@ pub fn update_partials_by_partition(instance: i32,
                 cumulativeScaleIndex: op.cumulativeScaleIndex,
             });
         }
-        beagleUpdatePartialsByPartition(instance,
+        transmute(beagleUpdatePartialsByPartition(instance,
                              beagle_ops.as_slice().as_ptr(),
-                             beagle_ops.len() as i32)
+                             beagle_ops.len() as i32) as i8)
     }
 }
 
@@ -326,7 +327,7 @@ pub fn update_transition_matrices(instance: i32,
                                   probabilityIndices: &[i32],
                                   firstDerivativeIndices: Option<&[i32]>,
                                   secondDerivativeIndices: Option<&[i32]>,
-                                  edgeLengths: &[f64]) -> i32 {
+                                  edgeLengths: &[f64]) -> ReturnCode {
     unsafe {
         let fdi_ptr = match firstDerivativeIndices {
             Some(slice) => slice.as_ptr(),
@@ -338,12 +339,12 @@ pub fn update_transition_matrices(instance: i32,
             None => std::ptr::null(),
         };
 
-        beagleUpdateTransitionMatrices(instance,
+        transmute(beagleUpdateTransitionMatrices(instance,
                                        eigenIndex,
                                        probabilityIndices.as_ptr(),
                                        fdi_ptr, sdi_ptr,
                                        edgeLengths.as_ptr(),
-                                       probabilityIndices.len() as i32)
+                                       probabilityIndices.len() as i32) as i8)
     }
 }
 
@@ -353,7 +354,7 @@ pub fn update_transition_matrices_with_multiple_models(instance: i32,
                                   probabilityIndices: &[i32],
                                   firstDerivativeIndices: Option<&[i32]>,
                                   secondDerivativeIndices: Option<&[i32]>,
-                                  edgeLengths: &[f64]) -> i32 {
+                                  edgeLengths: &[f64]) -> ReturnCode {
     unsafe {
         let fdi_ptr = match firstDerivativeIndices {
             Some(slice) => slice.as_ptr(),
@@ -365,21 +366,21 @@ pub fn update_transition_matrices_with_multiple_models(instance: i32,
             None => std::ptr::null(),
         };
 
-        beagleUpdateTransitionMatricesWithMultipleModels(instance,
+        transmute(beagleUpdateTransitionMatricesWithMultipleModels(instance,
                                        eigenIndices.as_ptr(),
                                        categoryRateIndices.as_ptr(),
                                        probabilityIndices.as_ptr(),
                                        fdi_ptr, sdi_ptr,
                                        edgeLengths.as_ptr(),
-                                       probabilityIndices.len() as i32)
+                                       probabilityIndices.len() as i32) as i8)
     }
 }
 
 pub fn wait_for_partials(instance: i32,
-                         destinationPartials: &[i32]) -> i32 {
+                         destinationPartials: &[i32]) -> ReturnCode {
     unsafe {
-        beagleWaitForPartials(instance, destinationPartials.as_ptr(),
-                              destinationPartials.len() as i32)
+        transmute(beagleWaitForPartials(instance, destinationPartials.as_ptr(),
+                              destinationPartials.len() as i32) as i8)
     }
 }
 
