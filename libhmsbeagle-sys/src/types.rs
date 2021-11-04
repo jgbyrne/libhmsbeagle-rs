@@ -41,7 +41,7 @@ pub struct OperationByPartition {
     pub cumulativeScaleIndex: i32,
 }
 
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 pub enum ReturnCode {
     SUCCESS = 0,
     ERROR_GENERAL = -1,
