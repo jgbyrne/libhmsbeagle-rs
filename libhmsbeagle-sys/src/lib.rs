@@ -48,6 +48,121 @@ pub fn get_resource_list() -> Vec<Resource> {
     }
 }
 
+
+// unimpl by partition
+pub fn accumulate_scale_factors(instance: i32,
+                                scaleIndices: &[i32],
+                                cumulativeScaleIndex: i32) -> ReturnCode {
+    unsafe {
+        transmute(beagleAccumulateScaleFactors(instance,
+                                               scaleIndices.as_ptr(),
+                                               scaleIndices.len() as i32,
+                                               cumulativeScaleIndex) as i8)
+    }
+}
+
+pub fn calculate_edge_log_likelihoods(instance: i32,
+                                      parentBufferIndices: &[i32],
+                                      childBufferIndices: &[i32],
+                                      probabilityIndices: &[i32],
+                                      firstDerivativeIndices: Option<&[i32]>,
+                                      secondDerivativeIndices: Option<&[i32]>,
+                                      categoryWeightsIndices: &[i32],
+                                      stateFrequenciesIndices: &[i32],
+                                      cumulativeScaleIndices: &[i32],
+                                      outSumLogLikelihood: &mut f64,
+                                      outSumFirstDerivative: Option<&mut f64>,
+                                      outSumSecondDerivative: Option<&mut f64>) -> ReturnCode {
+    unsafe {
+        let fdi_ptr = match firstDerivativeIndices {
+            Some(slice) => slice.as_ptr(),
+            None => std::ptr::null(),
+        };
+
+        let sdi_ptr = match secondDerivativeIndices {
+            Some(slice) => slice.as_ptr(),
+            None => std::ptr::null(),
+        };
+
+        let osfd_ptr: *mut f64 = match outSumFirstDerivative {
+            Some(sfd) => sfd,
+            None => std::ptr::null_mut(),
+        };
+
+        let ossd_ptr: *mut f64 = match outSumSecondDerivative {
+            Some(ssd) => ssd,
+            None => std::ptr::null_mut(),
+        };
+
+        transmute(beagleCalculateEdgeLogLikelihoods(instance,
+                                                    parentBufferIndices.as_ptr(),
+                                                    childBufferIndices.as_ptr(),
+                                                    probabilityIndices.as_ptr(),
+                                                    fdi_ptr,
+                                                    sdi_ptr,
+                                                    categoryWeightsIndices.as_ptr(),
+                                                    stateFrequenciesIndices.as_ptr(),
+                                                    cumulativeScaleIndices.as_ptr(),
+                                                    parentBufferIndices.len() as i32,
+                                                    outSumLogLikelihood,
+                                                    osfd_ptr,
+                                                    ossd_ptr,
+                                                    ) as i8)
+    }
+}
+
+pub fn calculate_root_log_likelihoods(instance: i32,
+                                      bufferIndices: &[i32],
+                                      categoryWeightsIndices: &[i32],
+                                      stateFrequenciesIndices: &[i32],
+                                      cumulativeScaleIndices: &[i32],
+                                      outSumLogLikelihood: &mut f64) -> ReturnCode {
+    unsafe {
+        transmute(beagleCalculateRootLogLikelihoods(
+                instance,
+                bufferIndices.as_ptr(),
+                categoryWeightsIndices.as_ptr(),
+                stateFrequenciesIndices.as_ptr(),
+                cumulativeScaleIndices.as_ptr(),
+                bufferIndices.len() as i32,
+                outSumLogLikelihood) as i8)
+
+    } 
+}
+
+pub fn calculate_root_log_likelihoods_by_partition(instance: i32,
+                                                   bufferIndices: &[i32],
+                                                   categoryWeightsIndices: &[i32],
+                                                   stateFrequenciesIndices: &[i32],
+                                                   cumulativeScaleIndices: &[i32],
+                                                   partitionIndices: &[i32],
+                                                   outSumLogLikelihoodByPartition: &mut f64,
+                                                   outSumLogLikelihood: &mut f64) -> ReturnCode {
+    unimplemented!()
+}
+
+pub fn convolve_transition_matrices(instance: i32,
+                                    firstIndices: &[i32],
+                                    secondIndices: &[i32],
+                                    resultIndices: &[i32]) -> ReturnCode {
+    unsafe {
+        transmute(beagleConvolveTransitionMatrices(instance,
+                                                   firstIndices.as_ptr(),
+                                                   secondIndices.as_ptr(),
+                                                   resultIndices.as_ptr(),
+                                                   firstIndices.len() as i32) as i8)
+    }
+}
+
+pub fn copy_scale_factors(instance: i32, destScalingIndex: i32,
+                          srcScalingIndex: i32) -> ReturnCode {
+    unsafe {
+        transmute(beagleCopyScaleFactors(instance,
+                                         destScalingIndex,
+                                         srcScalingIndex) as i8)
+    }
+}
+
 pub fn create_instance(
     tipCount: i32,
     partialsBufferCount: i32,
@@ -295,7 +410,7 @@ pub fn set_pattern_weights(instance: i32, inPatternWeights: &[f64]) -> ReturnCod
     unsafe { transmute(beagleSetPatternWeights(instance, inPatternWeights.as_ptr()) as i8) }
 }
 
-pub fn set_state_frequences(
+pub fn set_state_frequencies(
     instance: i32,
     stateFrequenciesIndex: i32,
     inStateFrequencies: &[f64],
