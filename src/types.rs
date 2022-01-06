@@ -1,5 +1,6 @@
 use crate::sys;
 
+#[derive(Debug)]
 pub struct Model {
     pub state_freqs: Vec<f64>,
 
@@ -11,6 +12,7 @@ pub struct Model {
     pub category_probs: Vec<f64>,
 }
 
+#[derive(Debug)]
 pub struct Instance {
     id: i32,
     details: sys::InstanceDetails,
