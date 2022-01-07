@@ -62,7 +62,7 @@ bitflags! {
         const COMPUTATION_ASYNCH = 1 << 3;
         const EIGEN_REAL = 1 << 4;
         const EIGEN_COMPLEX = 1 << 5;
-        const SCALNG_MANUAL = 1 << 6;
+        const SCALING_MANUAL = 1 << 6;
         const SCALING_AUTO = 1 << 7;
         const SCALING_ALWAYS = 1 << 8;
         const SCALING_DYNAMIC = 1 << 25;
