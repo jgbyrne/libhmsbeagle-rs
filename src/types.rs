@@ -13,6 +13,23 @@ pub struct Model {
 }
 
 #[derive(Debug)]
+pub struct MatrixUpdate {
+    pub model_id: i32,
+    pub node_id: i32,
+    pub edge_length: f64,
+}
+
+impl MatrixUpdate {
+    pub fn new(model_id: i32, node_id: i32, edge_length: f64) -> Self {
+        MatrixUpdate {
+            model_id,
+            node_id,
+            edge_length
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct Alternates {
     // number of buffers before alternates
     n_partials_core: i32,
@@ -34,12 +51,12 @@ pub struct Instance {
     n_nodes: i32,
     n_tips: i32,
 
+    n_models: i32,
+
     // number of buffers including alternates
     n_partials: i32,
     n_matrices: i32,
     n_scalers: i32,
-
-    models: Vec<Model>,
 
     tip_partials: bool,
     scaling: bool,
@@ -47,8 +64,8 @@ pub struct Instance {
 }
 
 impl Instance {
-    pub fn new(n_states: i32, n_sites: i32, n_rates: i32, n_nodes: i32, n_tips: i32,
-               tip_partials: bool, scaling: bool, alternates: bool, models: Vec<Model>) -> Instance {
+    pub fn new(n_states: i32, n_sites: i32, n_rates: i32, n_nodes: i32, n_tips: i32, n_models: i32,
+               tip_partials: bool, scaling: bool, alternates: bool) -> Instance {
 
         let n_internals = n_nodes - n_tips;
 
@@ -72,22 +89,13 @@ impl Instance {
                                                  n_seqs,
                                                  n_states,
                                                  n_sites,
-                                                 models.len() as i32,
+                                                 n_models,
                                                  n_matrices,
                                                  n_rates,
                                                  n_scalers,
                                                  None,
                                                  prefs,
                                                  sys::Flags::empty());
-
-        for i in 0..(models.len()) {
-            sys::set_state_frequencies(id, i as i32, &models[i].state_freqs);
-            sys::set_eigen_decomposition(id, i as i32, &models[i].eigenvectors,
-                                                       &models[i].inv_eigenvectors,
-                                                       &models[i].eigenvalues);
-            sys::set_category_rates_with_index(id, i as i32, &models[i].category_rates);
-            sys::set_category_weights(id, i as i32, &models[i].category_probs);
-        }
 
         sys::set_pattern_weights(id, &(0..n_sites).map(|_| 1.0).collect::<Vec<f64>>()[..]);
 
@@ -114,17 +122,29 @@ impl Instance {
             n_rates,
             n_nodes,
             n_tips,
+            n_models,
 
             n_partials,
             n_matrices,
             n_scalers,
 
-            models,
-
             alternates: alts,
 
             scaling,
             tip_partials,
+        }
+    }
+
+    pub fn set_models(&self, models: &Vec<Model>) {
+        let num_models = self.n_models as usize;
+        assert!(models.len() == num_models);
+        for i in 0..num_models {
+            sys::set_state_frequencies(self.id, i as i32, &models[i].state_freqs);
+            sys::set_eigen_decomposition(self.id, i as i32, &models[i].eigenvectors,
+                                                       &models[i].inv_eigenvectors,
+                                                       &models[i].eigenvalues);
+            sys::set_category_rates_with_index(self.id, i as i32, &models[i].category_rates);
+            sys::set_category_weights(self.id, i as i32, &models[i].category_probs);
         }
     }
 
@@ -218,11 +238,29 @@ impl Instance {
         alts.alt_matrices[idx] = !alts.alt_matrices[idx];
     }
 
+    pub fn update_matrices(&mut self, updates: Vec<MatrixUpdate>) {
+        if updates.len() == 0 { return; }
 
-    pub fn update_matrices(&mut self, model_id: i32, edge_lengths: Vec<f64>) {
-        assert!(edge_lengths.len() == (self.n_nodes - 1) as usize);
-        let matrix_idxs = &(0..(self.n_nodes - 1)).map(|i| i as i32).collect::<Vec<i32>>()[..];
-        sys::update_transition_matrices(self.id, model_id, matrix_idxs, None, None, &edge_lengths);
+        let mut matrix_idxs = vec![];
+        let mut edge_lengths = vec![];
+        let mut model_idxs = vec![];
+
+        let primary_model = updates[0].model_id;
+        let mut single_model = true;
+        for u in updates {
+            if u.model_id != primary_model { single_model = true };
+            matrix_idxs.push(self.matrix_buffer(u.node_id));
+            edge_lengths.push(u.edge_length);
+            model_idxs.push(u.model_id);
+        }
+
+        if single_model {
+            sys::update_transition_matrices(self.id, primary_model, &matrix_idxs, None, None, &edge_lengths);
+        }
+        else {
+            sys::update_transition_matrices_with_multiple_models(self.id, &model_idxs, &model_idxs, &matrix_idxs, None, None, &edge_lengths);
+        }
+
     }
 
     pub fn set_tip_data_partial(&mut self, tip_id: i32, partial: Vec<f64>) {
