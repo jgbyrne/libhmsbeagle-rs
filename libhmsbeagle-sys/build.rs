@@ -5,7 +5,7 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
-    let beagle_dst = cmake::Config::new("beagle-lib").cflag("-fPIC").cxxflag("-fPIC").build();
+    let beagle_dst = cmake::Config::new("beagle-lib").define("BUILD_JNI", "OFF").define("BUILD_OPENCL", "ON").cflag("-fPIC").cxxflag("-fPIC").build();
 
     println!("cargo:rustc-link-search=native={}", beagle_dst.join("lib").display());
     println!("cargo:rustc-link-lib=hmsbeagle");
