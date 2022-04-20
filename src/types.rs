@@ -163,7 +163,7 @@ impl Instance {
     pub fn partials_buffer(&self, node_id: i32) -> i32 {
         assert!(node_id < self.n_nodes);
         if let Some(alt) = &self.alternates {
-            if (node_id >= self.n_tips) {
+            if node_id >= self.n_tips {
                 let internal_offset = node_id - self.n_tips;
                 if alt.alt_partials[internal_offset as usize] {
                     // |<     n_partials_core    >|
