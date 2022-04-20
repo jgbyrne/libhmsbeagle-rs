@@ -1,3 +1,9 @@
+// =-=-=-=-= types.rs =-=-=-=-=
+// This file implements a more idiomatic Rust API for BEAGLE 3
+// :: It encapsulates the thin wrapper interface of libhmsbeagle-sys
+// :: Implements an RAII style BEAGLE `Instance` type
+// :: Provides support for alternate partial/matrix buffers (for trial/revert)
+
 use crate::sys;
 
 #[derive(Debug)]

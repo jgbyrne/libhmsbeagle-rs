@@ -1,3 +1,8 @@
+// =-=-=-=-= types.rs =-=-=-=-=
+// Wrappers for BEAGLE 3 native types
+// :: these are mostly 1:1 mappings, but with some niceties
+// :: for example we use the bitflags library for `Flags`
+
 use bitflags::bitflags;
 
 #[derive(Debug)]

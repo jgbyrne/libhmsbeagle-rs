@@ -1,4 +1,9 @@
-// Suppress the flurry of warnings caused by using "C" naming conventions
+// =-=-=-=-= lib.rs =-=-=-=-=
+// Thin Rust wrapping for BEAGLE 3 API
+// :: Some modest abstractions such as Option::None <-> nullptr
+// :: Not fully fleshed out (little/no support for partitions)
+
+// Don't warn for names of C bindings 
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]

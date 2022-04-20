@@ -1,3 +1,6 @@
+// =-=-=-=-= lib.rs =-=-=-=-=
+// This library implementsn idiomatic Rust interface for a subset of BEAGLE 3
+
 pub extern crate beagle_sys;
 mod types;
 
