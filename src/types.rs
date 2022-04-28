@@ -82,7 +82,7 @@ impl Instance {
             if alternates { n_scalers_core + n_internals } else { n_scalers_core }
         } else { 0 };
 
-        let prefs = sys::Flags::SCALING_MANUAL | sys::Flags::SCALERS_LOG;
+        let prefs = sys::Flags::SCALING_MANUAL | sys::Flags::SCALERS_LOG | sys::Flags::FRAMEWORK_OPENCL;
 
         let (id, details) = sys::create_instance(n_tips,
                                                  n_partials,
