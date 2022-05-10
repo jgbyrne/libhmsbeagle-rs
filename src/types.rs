@@ -147,8 +147,8 @@ impl Instance {
         for i in 0..num_models {
             sys::set_state_frequencies(self.id, i as i32, &models[i].state_freqs);
             sys::set_eigen_decomposition(self.id, i as i32, &models[i].eigenvectors,
-                                                       &models[i].inv_eigenvectors,
-                                                       &models[i].eigenvalues);
+                                                            &models[i].inv_eigenvectors,
+                                                            &models[i].eigenvalues);
             sys::set_category_rates_with_index(self.id, i as i32, &models[i].category_rates);
             sys::set_category_weights(self.id, i as i32, &models[i].category_probs);
         }
